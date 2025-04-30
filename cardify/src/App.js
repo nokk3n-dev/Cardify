@@ -33,6 +33,8 @@ function App() {
   const [stage, setStage] = useState(0);
   const [timeRange, setTimeRange] = useState(timeOptions[0]);
   const [lockedTimeRange, setLockedTimeRange] = useState(timeOptions[0]);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('access_token');
@@ -87,10 +89,12 @@ function App() {
 
   // Fetch Helper Function
   const fetchItems = (type, timeParam) => {
-    const url = 
+    setLoading(true);
+    const url =
       type === 'Songs'
         ? `https://api.spotify.com/v1/me/top/tracks?time_range=${timeParam}&limit=5`
         : `https://api.spotify.com/v1/me/top/artists?time_range=${timeParam}&limit=5`;
+  
     fetch(url, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => {
         if (!res.ok) throw new Error(res.statusText);
@@ -100,8 +104,10 @@ function App() {
         if (type === 'Songs') setTopSongs(data.items || []);
         else setTopArtists(data.items || []);
       })
-    .catch(err => console.error('Error fetching items:', err));
+      .catch(err => console.error('Error fetching items:', err))
+      .finally(() => setLoading(false));
   };
+  
 
   // UI Handlers
   const handleOptionsClick = option => {
@@ -155,18 +161,26 @@ function App() {
 
     if (stage <= 5) {
       const item = items[stage - 1];
-      return(
+    
+      if (loading || !item) {
+        return (
+          <div className="content">
+            <h2>Loading...</h2>
+          </div>
+        );
+      }
+    
+      return (
         <div className="content" onClick={handleProgressClick}>
           <h2>
-            {item
-              ? selection === 'Songs'
-                ? `${item.name} — ${item.artists[0]?.name}`
-                : item.name
-              : `${singular} ${stage} ${lockedTimeRange}`}
+            {selection === 'Songs'
+              ? `${item.name} — ${item.artists[0]?.name}`
+              : item.name}
           </h2>
         </div>
       );
     }
+    
 
     // Stage 6: Show all the Cards
     return (
