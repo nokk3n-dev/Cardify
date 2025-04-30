@@ -3,7 +3,7 @@ import { generateCodeVerifier, generateCodeChallenge } from './utils/pkce';
 import './App.css';
 
 // Spotify App Settings
-const CLIENT_ID = '3a69743648ff49109243f07ab2ec555e';
+const CLIENT_ID = '5afec2d74344467287f560f72d4da518';
 const REDIRECT_URI = 'http://127.0.0.1:3000/callback';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
@@ -137,7 +137,7 @@ function App() {
   );
 
   const renderStartScreen = () => (
-    <div clasName="content">
+    <div className="content">
       {renderTimeSelector()}
       <div className="button-group">
         {options.map(opt => (
@@ -197,9 +197,16 @@ function App() {
   }
 
   return (
-    <div className="App container">
-      {selection ? renderProgressView() : renderStartScreen()}
-    </div>
+    <>
+      <header className="nav-bar">
+        
+        <a href="https://open.spotify.com/"> <img height="32px" src="/spotify-logo.png" alt="Spotify logo" /></a>
+        <h1 className="header-title">Cardify</h1>
+      </header>
+      <div className="App container">
+        {selection ? renderProgressView() : renderStartScreen()}
+      </div>
+    </>
   );
 }
 
