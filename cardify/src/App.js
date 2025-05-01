@@ -17,10 +17,10 @@ const timeMap = {
   '6 Months': 'medium_term',
   '1 Year': 'long_term'
 };
-const singularMap = {
-  Songs: 'Song',
-  Artists: 'Artist'
-};
+//const singularMap = {
+//  Songs: 'Song',
+//  Artists: 'Artist'
+//};
 
 function App() {
   // Authorization & Data State
@@ -32,7 +32,7 @@ function App() {
   const [selection, setSelection] = useState(null);
   const [stage, setStage] = useState(0);
   const [timeRange, setTimeRange] = useState(timeOptions[0]);
-  const [lockedTimeRange, setLockedTimeRange] = useState(timeOptions[0]);
+  //const [lockedTimeRange, setLockedTimeRange] = useState(timeOptions[0]);
   const [loading, setLoading] = useState(false);
 
 
@@ -113,7 +113,7 @@ function App() {
   const handleOptionsClick = option => {
     setSelection(option);
     setStage(1);
-    setLockedTimeRange(timeRange);
+    //setLockedTimeRange(timeRange);
     fetchItems(option, timeMap[timeRange]);
   };
 
@@ -124,7 +124,7 @@ function App() {
   const handleSwitchClick = option => {
     setSelection(option);
     setStage(1);
-    setLockedTimeRange(timeRange);
+    //setLockedTimeRange(timeRange);
     fetchItems(option, timeMap[timeRange]);
   };
 
@@ -156,7 +156,7 @@ function App() {
   );
 
   const renderProgressView = () => {
-    const singular = singularMap[selection];
+    //const singular = singularMap[selection];
     const items = selection === 'Songs' ? topSongs : topArtists;
 
     if (stage <= 5) {
@@ -172,11 +172,46 @@ function App() {
     
       return (
         <div className="content" onClick={handleProgressClick}>
-          <h2>
-            {selection === 'Songs'
-              ? `${item.name} — ${item.artists[0]?.name}`
-              : item.name}
-          </h2>
+          <div className="track-card">
+            {selection === 'Songs' && (
+              <>
+                <img
+                  src={item.album.images[0]?.url}
+                  alt={`${item.name} album cover`}
+                  className="track-image"
+                />
+                <div className="track-info">
+                  <h2>{item.name}</h2>
+                  <p><strong>Artists:</strong> {item.artists.map(artist => artist.name).join(', ')}</p>
+                  <p><strong>Album:</strong> {item.album.name}</p>
+                  <p><strong>Release Date:</strong> {item.album.release_date}</p>
+                  <p><strong>Popularity:</strong> {item.popularity}</p>
+                </div>
+              </>
+            )}
+            {selection === 'Artists' && (
+              <>
+                <img
+                  src={item.images[0]?.url}
+                  alt={`${item.name} artist portrait`}
+                  className="track-image"
+                />
+                <div className="track-info">
+                  <h2>{item.name}</h2>
+                  <p><strong>Genres:</strong> {item.genres?.join(', ') || 'Unknown'}</p>
+                  <p><strong>Popularity:</strong> {item.popularity}</p>
+                  <p><strong>Followers:</strong> {item.followers?.total?.toLocaleString() || 'N/A'}</p>
+                  <p>
+                    <strong>Spotify:</strong>{' '}
+                    <a href={item.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
+                      View Profile
+                    </a>
+                  </p>
+                </div>
+              </>
+            )}
+
+          </div>
         </div>
       );
     }
@@ -185,15 +220,49 @@ function App() {
     // Stage 6: Show all the Cards
     return (
       <div className="content">
-        <ul>
+        <div className="track-list">
           {(items || []).map(i => (
-            <li key={i.id}>
-              {selection === 'Songs'
-                ? `${i.name} — ${i.artists[0]?.name}`
-                : i.name}
-            </li>
+            <div key={i.id} className="track-card">
+              {selection === 'Songs' && (
+                <>
+                  <img
+                    src={i.album.images[0]?.url}
+                    alt={`${i.name} album cover`}
+                    className="track-image"
+                  />
+                  <div className="track-info">
+                    <h2>{i.name}</h2>
+                    <p><strong>Artists:</strong> {i.artists.map(artist => artist.name).join(', ')}</p>
+                    <p><strong>Album:</strong> {i.album.name}</p>
+                    <p><strong>Release Date:</strong> {i.album.release_date}</p>
+                    <p><strong>Popularity:</strong> {i.popularity}</p>
+                  </div>
+                </>
+              )}
+              {selection === 'Artists' && (
+                <>
+                  <img
+                    src={i.images[0]?.url}
+                    alt={`${i.name} artist portrait`}
+                    className="track-image"
+                  />
+                  <div className="track-info">
+                    <h2>{i.name}</h2>
+                    <p><strong>Genres:</strong> {i.genres?.join(', ') || 'Unknown'}</p>
+                    <p><strong>Popularity:</strong> {i.popularity}</p>
+                    <p><strong>Followers:</strong> {i.followers?.total?.toLocaleString() || 'N/A'}</p>
+                    <p>
+                      <strong>Spotify:</strong>{' '}
+                      <a href={i.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
+                        View Profile
+                      </a>
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
           ))}
-        </ul>
+        </div>
         {renderTimeSelector()}
         <div className="button-group">
           {options.map(opt => (
@@ -204,6 +273,7 @@ function App() {
         </div>
       </div>
     );
+    
   };
 
   if (!token) {

@@ -50,3 +50,39 @@ li {
   font-size: 1.2rem;
   margin: 0.3rem 0;
 }
+
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.track-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: black;
+}
+
+.track-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.track-info {
+  flex: 1;
+}
+
+.track-info h2 {
+  margin: 0 0 8px;
+}
+
+.track-info p {
+  margin: 4px 0;
+}
