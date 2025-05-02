@@ -40,6 +40,10 @@ body, html {
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 0;
   cursor: pointer;
 }
 ul {
@@ -53,13 +57,18 @@ li {
 
 .track-list {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+
+  width: 100%;
+  max-width: calc(3 * 300px + 2 * 24px);
+  margin: 0 auto;
 }
 
 .track-card {
   /* Size and Layout */
+  flex: 0 0 240px;
   width: 240px;
   display: flex;
   flex-direction: column;
@@ -91,7 +100,6 @@ li {
   /* Fill top of the card */
   width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 8px;
   object-fit: cover;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }

@@ -137,7 +137,7 @@ function App() {
   const downloadAsImage = () => {
     const el = document.getElementById('download-target');
     if (!el) return;
-    html2canvas(el).then(canvas => {
+    html2canvas(el, { useCORS: true }).then(canvas => {
       const link = document.createElement('a');
       link.download = `${selectedCard.name}.png`;
       link.href = canvas.toDataURL();
@@ -149,7 +149,7 @@ function App() {
   const downloadAsPDF = () => {
     const el = document.getElementById('download-target');
     if (!el) return;
-    html2canvas(el).then(canvas => {
+    html2canvas(el, { useCORS: true }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('portrait', 'pt', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -203,49 +203,51 @@ function App() {
     
       return (
         <div className="content" onClick={handleProgressClick}>
-          <div className="track-card">
-            {selection === 'Songs' && (
-              <>
-                <div className="track-image-container">
-                  <img className="track-image" src={item.album.images[0]?.url} alt={`${item.name} album cover`} />
-                </div>
-                <div className="track-info">
-                  <h2>{item.name}</h2>
-                  <div className="stats-grid">
-                    <p><strong>Artists:</strong> {item.artists.map(artist => artist.name).join(', ')}</p>
-                    <p><strong>Album:</strong> {item.album.name}</p>
-                    <p><strong>Release Date:</strong> {item.album.release_date}</p>
-                    <p><strong>Popularity:</strong> {item.popularity}</p>
+          <div className="track-list">
+            <div className="track-card">
+              {selection === 'Songs' && (
+                <>
+                  <div className="track-image-container">
+                    <img className="track-image" src={item.album.images[0]?.url} alt={`${item.name} album cover`} />
                   </div>
-                </div>
-              </>
-            )}
-            {selection === 'Artists' && (
-              <>
-                <div className="track-image-container">
-                  <img
-                    src={item.images[0]?.url}
-                    alt={`${item.name} artist portrait`}
-                    className="track-image"
-                  />
-                </div>
-                <div className="track-info">
-                  <h2>{item.name}</h2>
-                  <div className="stats-grid">
-                    <p><strong>Genres:</strong> {item.genres.join(', ')}</p>
-                    <p><strong>Popularity:</strong> {item.popularity}</p>
-                    <p><strong>Followers:</strong> {item.followers.total.toLocaleString()}</p>
-                    <p>
-                      <strong>Spotify:</strong>
-                      <a href={item.external_urls.spotify} target="_blank" rel="noopener noreferrer">
-                        View Profile
-                      </a>
-                    </p>
+                  <div className="track-info">
+                    <h2>{item.name}</h2>
+                    <div className="stats-grid">
+                      <p><strong>Artists:</strong> {item.artists.map(artist => artist.name).join(', ')}</p>
+                      <p><strong>Album:</strong> {item.album.name}</p>
+                      <p><strong>Release Date:</strong> {item.album.release_date}</p>
+                      <p><strong>Popularity:</strong> {item.popularity}</p>
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
+              {selection === 'Artists' && (
+                <>
+                  <div className="track-image-container">
+                    <img
+                      src={item.images[0]?.url}
+                      alt={`${item.name} artist portrait`}
+                      className="track-image"
+                    />
+                  </div>
+                  <div className="track-info">
+                    <h2>{item.name}</h2>
+                    <div className="stats-grid">
+                      <p><strong>Genres:</strong> {item.genres.join(', ')}</p>
+                      <p><strong>Popularity:</strong> {item.popularity}</p>
+                      <p><strong>Followers:</strong> {item.followers.total.toLocaleString()}</p>
+                      <p>
+                        <strong>Spotify:</strong>
+                        <a href={item.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+                          View Profile
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
 
+            </div>
           </div>
         </div>
       );
@@ -312,13 +314,13 @@ function App() {
           <div className="card-modal" onClick={() => setSelectedCard(null)}>
             <div
               className="card-modal-content"
-              id="download-target"
               onClick={e => e.stopPropagation()}
             >
-              {/* reusing the track-card layout, but enlarged */}
-              <div className="track-card enlarged">
+              {/* This is the part that will be downloaded */}
+              <div className="track-card enlarged" id="download-target">
                 <div className="track-image-container">
                   <img
+                    crossOrigin="anonymous"
                     className="track-image"
                     src={
                       selection === 'Songs'
