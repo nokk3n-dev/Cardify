@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateCodeVerifier, generateCodeChallenge } from './utils/pkce';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import './App.css';
 
 // Spotify App Settings
@@ -34,6 +36,9 @@ function App() {
   const [timeRange, setTimeRange] = useState(timeOptions[0]);
   //const [lockedTimeRange, setLockedTimeRange] = useState(timeOptions[0]);
   const [loading, setLoading] = useState(false);
+
+  // For Viewing Cards
+  const [selectedCard, setSelectedCard] = useState(null);
 
 
   useEffect(() => {
@@ -128,6 +133,32 @@ function App() {
     fetchItems(option, timeMap[timeRange]);
   };
 
+  // Save as png handler
+  const downloadAsImage = () => {
+    const el = document.getElementById('download-target');
+    if (!el) return;
+    html2canvas(el).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `${selectedCard.name}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
+  // export as PDF
+  const downloadAsPDF = () => {
+    const el = document.getElementById('download-target');
+    if (!el) return;
+    html2canvas(el).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('portrait', 'pt', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`${selectedCard.name}.pdf`);
+    });
+  };
+
   const renderTimeSelector = () => (
     <div className="time-selector">
       {timeOptions.map(t => (
@@ -175,11 +206,9 @@ function App() {
           <div className="track-card">
             {selection === 'Songs' && (
               <>
-                <img
-                  src={item.album.images[0]?.url}
-                  alt={`${item.name} album cover`}
-                  className="track-image"
-                />
+                <div className="track-image-container">
+                  <img className="track-image" src={item.album.images[0]?.url} alt={`${item.name} album cover`} />
+                </div>
                 <div className="track-info">
                   <h2>{item.name}</h2>
                   <div className="stats-grid">
@@ -193,29 +222,26 @@ function App() {
             )}
             {selection === 'Artists' && (
               <>
-                <img
-                  src={item.images[0]?.url}
-                  alt={`${item.name} artist portrait`}
-                  className="track-image"
-                />
+                <div className="track-image-container">
+                  <img
+                    src={item.images[0]?.url}
+                    alt={`${item.name} artist portrait`}
+                    className="track-image"
+                  />
+                </div>
                 <div className="track-info">
                   <h2>{item.name}</h2>
                   <div className="stats-grid">
-              +      <p><strong>Genres:</strong> {item.genres.join(', ')}</p>
-              +      <p><strong>Popularity:</strong> {item.popularity}</p>
-              +      <p><strong>Followers:</strong> {item.followers.total.toLocaleString()}</p>
-              +      <p><strong>Spotify:</strong>
-              +         <a href={item.external_urls.spotify} target="_blank" rel="noopener noreferrer">
-              +           View Profile
-              +         </a>
-              +      </p>
-              +    </div>
-                  <p>
-                    <strong>Spotify:</strong>{' '}
-                    <a href={item.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
-                      View Profile
-                    </a>
-                  </p>
+                    <p><strong>Genres:</strong> {item.genres.join(', ')}</p>
+                    <p><strong>Popularity:</strong> {item.popularity}</p>
+                    <p><strong>Followers:</strong> {item.followers.total.toLocaleString()}</p>
+                    <p>
+                      <strong>Spotify:</strong>
+                      <a href={item.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+                        View Profile
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </>
             )}
@@ -231,47 +257,136 @@ function App() {
       <div className="content">
         <div className="track-list">
           {(items || []).map(i => (
-            <div key={i.id} className="track-card">
+            <div key={i.id} className="track-card" onClick={() => setSelectedCard(i)}>
               {selection === 'Songs' && (
                 <>
-                  <img
-                    src={i.album.images[0]?.url}
-                    alt={`${i.name} album cover`}
-                    className="track-image"
-                  />
+                  <div className="track-image-container">
+                    <img
+                      src={i.album.images[0]?.url}
+                      alt={`${i.name} album cover`}
+                      className="track-image"
+                    />
+                  </div>
                   <div className="track-info">
                     <h2>{i.name}</h2>
-                    <p><strong>Artists:</strong> {i.artists.map(artist => artist.name).join(', ')}</p>
-                    <p><strong>Album:</strong> {i.album.name}</p>
-                    <p><strong>Release Date:</strong> {i.album.release_date}</p>
-                    <p><strong>Popularity:</strong> {i.popularity}</p>
+                    <div className="stats-grid">
+                      <p><strong>Artists:</strong> {i.artists.map(artist => artist.name).join(', ')}</p>
+                      <p><strong>Album:</strong> {i.album.name}</p>
+                      <p><strong>Release Date:</strong> {i.album.release_date}</p>
+                      <p><strong>Popularity:</strong> {i.popularity}</p>
+                    </div>
                   </div>
                 </>
               )}
               {selection === 'Artists' && (
                 <>
-                  <img
-                    src={i.images[0]?.url}
-                    alt={`${i.name} artist portrait`}
-                    className="track-image"
-                  />
+                  <div className="track-image-container">
+                    <img
+                      src={i.images[0]?.url}
+                      alt={`${i.name} artist portrait`}
+                      className="track-image"
+                    />
+                  </div>
                   <div className="track-info">
                     <h2>{i.name}</h2>
-                    <p><strong>Genres:</strong> {i.genres?.join(', ') || 'Unknown'}</p>
-                    <p><strong>Popularity:</strong> {i.popularity}</p>
-                    <p><strong>Followers:</strong> {i.followers?.total?.toLocaleString() || 'N/A'}</p>
-                    <p>
-                      <strong>Spotify:</strong>{' '}
-                      <a href={i.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
-                        View Profile
-                      </a>
-                    </p>
+                    <div className="stats-grid">
+                      <p><strong>Genres:</strong> {i.genres?.join(', ') || 'Unknown'}</p>
+                      <p><strong>Popularity:</strong> {i.popularity}</p>
+                      <p><strong>Followers:</strong> {i.followers?.total?.toLocaleString() || 'N/A'}</p>
+                      <p>
+                        <strong>Spotify:</strong>{' '}
+                        <a href={i.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
+                          View Profile
+                        </a>
+                      </p>
+                    </div>
                   </div>
                 </>
               )}
             </div>
           ))}
         </div>
+
+        {/* Download Section */}
+        {selectedCard && (
+          <div className="card-modal" onClick={() => setSelectedCard(null)}>
+            <div
+              className="card-modal-content"
+              id="download-target"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* reusing the track-card layout, but enlarged */}
+              <div className="track-card enlarged">
+                <div className="track-image-container">
+                  <img
+                    className="track-image"
+                    src={
+                      selection === 'Songs'
+                        ? selectedCard.album.images[0]?.url
+                        : selectedCard.images[0]?.url
+                    }
+                    alt={selectedCard.name}
+                  />
+                </div>
+                <div className="track-info">
+                  <h2>{selectedCard.name}</h2>
+                  <div className="stats-grid">
+                    {selection === 'Songs' ? (
+                      <>
+                        <p>
+                          <strong>Artists:</strong>{' '}
+                          {selectedCard.artists.map(a => a.name).join(', ')}
+                        </p>
+                        <p>
+                          <strong>Album:</strong> {selectedCard.album.name}
+                        </p>
+                        <p>
+                          <strong>Release Date:</strong>{' '}
+                          {selectedCard.album.release_date}
+                        </p>
+                        <p>
+                          <strong>Popularity:</strong> {selectedCard.popularity}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p>
+                          <strong>Genres:</strong>{' '}
+                          {selectedCard.genres?.join(', ') || 'Unknown'}
+                        </p>
+                        <p>
+                          <strong>Popularity:</strong>{' '}
+                          {selectedCard.popularity}
+                        </p>
+                        <p>
+                          <strong>Followers:</strong>{' '}
+                          {selectedCard.followers?.total.toLocaleString() ||
+                            'N/A'}
+                        </p>
+                        <p>
+                          <strong>Spotify:</strong>{' '}
+                          <a
+                            href={selectedCard.external_urls.spotify}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View Profile
+                          </a>
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="download-buttons">
+                <button onClick={downloadAsImage}>Download as Image</button>
+                <button onClick={downloadAsPDF}>Download as PDF</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {renderTimeSelector()}
         <div className="button-group">
           {options.map(opt => (
@@ -282,7 +397,6 @@ function App() {
         </div>
       </div>
     );
-    
   };
 
   if (!token) {

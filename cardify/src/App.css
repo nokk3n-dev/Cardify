@@ -66,7 +66,7 @@ li {
   overflow: hidden;
 
   /* This will make the border like a trading card */
-  border: 4px solid #FFD700;
+  border: 4px solid #000000;
   border-radius: 12px;
 
   /* This is for textured background */
@@ -82,13 +82,18 @@ li {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
+.track-image-container {
+  padding: 8px;
+  background-color: transparent;
+}
+
 .track-card .track-image {
   /* Fill top of the card */
-  width: 90%;
-  height: 50%;
-  padding-top: 10%;
-
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
   object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .track-card .track-info {
@@ -141,4 +146,41 @@ li {
 
 .track-info p {
   margin: 4px 0;
+}
+
+/* backdrop */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* modal panel */
+.card-modal-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+/* enlarge the reused card */
+.track-card.enlarged {
+  width: 360px;
+  transform: none;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
+  cursor: default;
+}
+
+/* download button row */
+.download-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
