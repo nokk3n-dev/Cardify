@@ -59,28 +59,84 @@ li {
 }
 
 .track-card {
+  /* Size and Layout */
+  width: 240px;
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid #ccc;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* This will make the border like a trading card */
+  border: 4px solid #FFD700;
   border-radius: 12px;
-  background-color: black;
+
+  /* This is for textured background */
+  background: linear-gradient(145deg, #fefefe, #e0e0e0);
+
+  /* Lift effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.track-image {
-  width: 100px;
-  height: 100px;
+.track-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.track-card .track-image {
+  /* Fill top of the card */
+  width: 90%;
+  height: 50%;
+  padding-top: 10%;
+
   object-fit: cover;
-  border-radius: 8px;
 }
 
-.track-info {
+.track-card .track-info {
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 }
 
-.track-info h2 {
+.track-card .track-info h2 {
   margin: 0 0 8px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Wrap stats in a two-column grid.
+  To make this work, in your App.js wrap all the <p> stats
+  inside a <div className="stats-grid"> ... </div>. */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+
+/* Each stat line: label/value */
+.stats-grid p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Label bold, narrow */
+.stats-grid p strong {
+  display: inline-block;
+  width: 70px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Link styling */
+.stats-grid a {
+  color: #1DB954;                   /* Spotify green */
+  text-decoration: none;
+}
+.stats-grid a:hover {
+  text-decoration: underline;
 }
 
 .track-info p {

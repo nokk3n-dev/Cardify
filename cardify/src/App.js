@@ -182,10 +182,12 @@ function App() {
                 />
                 <div className="track-info">
                   <h2>{item.name}</h2>
-                  <p><strong>Artists:</strong> {item.artists.map(artist => artist.name).join(', ')}</p>
-                  <p><strong>Album:</strong> {item.album.name}</p>
-                  <p><strong>Release Date:</strong> {item.album.release_date}</p>
-                  <p><strong>Popularity:</strong> {item.popularity}</p>
+                  <div className="stats-grid">
+                    <p><strong>Artists:</strong> {item.artists.map(artist => artist.name).join(', ')}</p>
+                    <p><strong>Album:</strong> {item.album.name}</p>
+                    <p><strong>Release Date:</strong> {item.album.release_date}</p>
+                    <p><strong>Popularity:</strong> {item.popularity}</p>
+                  </div>
                 </div>
               </>
             )}
@@ -198,9 +200,16 @@ function App() {
                 />
                 <div className="track-info">
                   <h2>{item.name}</h2>
-                  <p><strong>Genres:</strong> {item.genres?.join(', ') || 'Unknown'}</p>
-                  <p><strong>Popularity:</strong> {item.popularity}</p>
-                  <p><strong>Followers:</strong> {item.followers?.total?.toLocaleString() || 'N/A'}</p>
+                  <div className="stats-grid">
+              +      <p><strong>Genres:</strong> {item.genres.join(', ')}</p>
+              +      <p><strong>Popularity:</strong> {item.popularity}</p>
+              +      <p><strong>Followers:</strong> {item.followers.total.toLocaleString()}</p>
+              +      <p><strong>Spotify:</strong>
+              +         <a href={item.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+              +           View Profile
+              +         </a>
+              +      </p>
+              +    </div>
                   <p>
                     <strong>Spotify:</strong>{' '}
                     <a href={item.external_urls?.spotify} target="_blank" rel="noopener noreferrer">
