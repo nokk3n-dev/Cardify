@@ -40,6 +40,10 @@ body, html {
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 0;
   cursor: pointer;
 }
 ul {
@@ -53,36 +57,138 @@ li {
 
 .track-list {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+
+  width: 100%;
+  max-width: calc(3 * 300px + 2 * 24px);
+  margin: 0 auto;
 }
 
 .track-card {
+  /* Size and Layout */
+  flex: 0 0 240px;
+  width: 240px;
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid #ccc;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* This will make the border like a trading card */
+  border: 4px solid #000000;
   border-radius: 12px;
-  background-color: black;
+
+  /* This is for textured background */
+  background: linear-gradient(145deg, #fefefe, #e0e0e0);
+
+  /* Lift effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.track-image {
-  width: 100px;
-  height: 100px;
+.track-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.track-image-container {
+  padding: 8px;
+  background-color: transparent;
+}
+
+.track-card .track-image {
+  /* Fill top of the card */
+  width: 100%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.track-info {
+.track-card .track-info {
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 }
 
-.track-info h2 {
+.track-card .track-info h2 {
   margin: 0 0 8px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Wrap stats in a two-column grid.
+  To make this work, in your App.js wrap all the <p> stats
+  inside a <div className="stats-grid"> ... </div>. */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+
+/* Each stat line: label/value */
+.stats-grid p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Label bold, narrow */
+.stats-grid p strong {
+  display: inline-block;
+  width: 70px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Link styling */
+.stats-grid a {
+  color: #1DB954;                   /* Spotify green */
+  text-decoration: none;
+}
+.stats-grid a:hover {
+  text-decoration: underline;
 }
 
 .track-info p {
   margin: 4px 0;
+}
+
+/* backdrop */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* modal panel */
+.card-modal-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+/* enlarge the reused card */
+.track-card.enlarged {
+  width: 360px;
+  transform: none;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
+  cursor: default;
+}
+
+/* download button row */
+.download-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
