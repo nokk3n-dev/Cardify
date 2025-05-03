@@ -12,30 +12,31 @@ const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
 const SCOPES = ['user-top-read'];
 
 // UI Options & Helpers
-const options = ['Songs', 'Artists'];
-const timeOptions = ['1 Month', '6 Months', '1 Year'];
+const packs = [
+  { label: 'Songs - 1 Month',     type: 'Songs',    time: '1 Month' },
+  { label: 'Songs - 6 Months',    type: 'Songs',    time: '6 Months' },
+  { label: 'Songs - 1 Year',      type: 'Songs',    time: '1 Year' },
+  { label: 'Artists - 1 Month',   type: 'Artists',  time: '1 Month' },
+  { label: 'Artists - 6 Months',  type: 'Artists',  time: '6 Months' },
+  { label: 'Artists - 1 Year',    type: 'Artists',  time: '1 Year' },
+];
 const timeMap = {
   '1 Month': 'short_term',
   '6 Months': 'medium_term',
   '1 Year': 'long_term'
 };
-//const singularMap = {
-//  Songs: 'Song',
-//  Artists: 'Artist'
-//};
 
 function App() {
   // Authorization & Data State
-  const [token, setToken] = useState(null);
-  const [topSongs, setTopSongs] = useState([]);
+  const [token, setToken]           = useState(null);
+  const [topSongs, setTopSongs]     = useState([]);
   const [topArtists, setTopArtists] = useState([]);
 
   // UI Flow State
   const [selection, setSelection] = useState(null);
-  const [stage, setStage] = useState(0);
-  const [timeRange, setTimeRange] = useState(timeOptions[0]);
-  //const [lockedTimeRange, setLockedTimeRange] = useState(timeOptions[0]);
-  const [loading, setLoading] = useState(false);
+  const [timeRange, setTimeRange] = useState(null);
+  const [stage, setStage]         = useState(0);
+  const [loading, setLoading]     = useState(false);
 
   // For Viewing Cards
   const [selectedCard, setSelectedCard] = useState(null);
@@ -115,22 +116,15 @@ function App() {
   
 
   // UI Handlers
-  const handleOptionsClick = option => {
-    setSelection(option);
+  const handlePackClick = ({ type, time }) => {
+    setSelection(type);
+    setTimeRange(time);
     setStage(1);
-    //setLockedTimeRange(timeRange);
-    fetchItems(option, timeMap[timeRange]);
+    fetchItems(type, timeMap[time]);
   };
 
   const handleProgressClick = () => {
     setStage(prev => (prev < 5 ? prev + 1 : 6));
-  };
-
-  const handleSwitchClick = option => {
-    setSelection(option);
-    setStage(1);
-    //setLockedTimeRange(timeRange);
-    fetchItems(option, timeMap[timeRange]);
   };
 
   // Save as png handler
@@ -159,27 +153,21 @@ function App() {
     });
   };
 
-  const renderTimeSelector = () => (
-    <div className="time-selector">
-      {timeOptions.map(t => (
-        <button
-          key={t}
-          onClick={() => setTimeRange(t)}
-          className={timeRange === t ? 'active' : ''}
-        >
-          {t}
-        </button>
-      ))}
-    </div>
-  );
-
   const renderStartScreen = () => (
     <div className="content">
-      {renderTimeSelector()}
-      <div className="button-group">
-        {options.map(opt => (
-          <button key={opt} onClick={() => handleOptionsClick(opt)}>
-            {opt}
+      <div className="pack-selector">
+        {packs.map(p => (
+          <button
+            key={p.label}
+            className="pack-btn-img"
+            onClick={() => handlePackClick(p)}
+          >
+            <img
+              src='/blank-pack.png'
+              alt={p.label}
+              className='pack-img-only'
+            />
+            <span className="pack-label">{p.label}</span>
           </button>
         ))}
       </div>
@@ -389,13 +377,20 @@ function App() {
           </div>
         )}
 
-        {renderTimeSelector()}
+        {/* Start Over */}
         <div className="button-group">
-          {options.map(opt => (
-            <button key={opt} onClick={() => handleSwitchClick(opt)}>
-              {opt}
-            </button>
-          ))}
+          <button
+            onClick={() => {
+              setSelection(null);
+              setTimeRange(null);
+              setStage(0);
+              setTopArtists([]);
+              setTopSongs([]);
+              setSelectedCard(null);
+            }}
+          >
+            Open Another Pack
+          </button>
         </div>
       </div>
     );
