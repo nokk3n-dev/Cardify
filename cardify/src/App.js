@@ -5,7 +5,7 @@ import jsPDF from 'jspdf';
 import './App.css';
 
 // Spotify App Settings
-const CLIENT_ID = '5afec2d74344467287f560f72d4da518';
+const CLIENT_ID = '3a69743648ff49109243f07ab2ec555e';
 const REDIRECT_URI = 'https://cardify-rho.vercel.app/';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
