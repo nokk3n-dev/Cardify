@@ -6,7 +6,7 @@ import './App.css';
 
 // Spotify App Settings
 const CLIENT_ID = '5afec2d74344467287f560f72d4da518';
-const REDIRECT_URI = 'https://cardify-rho.vercel.app/';
+const REDIRECT_URI = 'https://cardify-rho.vercel.app/callback';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
 const SCOPES = ['user-top-read'];
